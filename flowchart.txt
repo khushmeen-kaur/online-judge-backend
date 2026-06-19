@@ -1,0 +1,126 @@
+for password hashing :
+pre function for userschema 
+userSchema.pre("save), async func
+install bcryptjs
+salt=10
+const hash=await bcrypt.hash(this.password,10)
+this.password=hash 
+// we use ismodified , to check if pass already hashed or not , dont wanna hash again , suppose user changed username , save , before pre hook of passwword will run but we dont wanna hash password again 
+
+logout->>>
+
+blcklist model:schema (token , timestamps) 
+controller => take token -> check if we got or not ->model.create (token)-> clear cookie in res ->response message
+install cookie parser too , in app.js import cookie-parser , app.use(cookieparser()) , otherwise token cant be retrived ok
+
+during login ->>>
+
+password.comparePassword method introduced in usermodel schema.methods.funcname();
+compare(givenplainpassword,storedhashedpassword)
+compare(password,this.password)
+user.comaprePassword
+
+>>>
+connect to db -> app.listen server start 
+connecttoBb is async func who return promise 
+so to avoid this make start fuction ( await dbconnection fuction , then server start )
+in dbconnect function , there is await used , so dbconnect must be async
+
+>>>
+400=bad req , email ,username, password provided or not
+store= await modelname.create(...)
+401=no such user exist , during login
+token has userid 
+this not in arrow functions undwfined
+make jwt token gerneration method in schema only , not in contoller sepreately , login logout one
+
+>>> auth middleware :
+token get , find user by id , rwq->req.user 
+
+architecture:
+problem schema
+test case schema
+status of problem : enum not 0,1,2...
+user submit code -> create submison -> saved in db -> status=pending -> quue job created -> return sub id res
+subid , status:pending ; user doest wait
+
+async processing : sub-> queue ->worker -> status=running -> exccute -> update submission staus accepted 
+we are making task procesising sys , jobs to workers 
+
+>> lets make problem model 
+who can create problem : admin -> authorization(allowed to do) ; make auth middlware , isadmin middlware , enum in user type (user or admin)
+                         authmiddlware->isadmin->createproblem
+problem one to may relatioship with testcases
+seprate collection for status of submission? id,status
+
+create problem >>>> auth middleware , problem model , isAdmin middleware
+get problems (can be based on difficulty too)>>>>get problem controller function : show problem id , title , dificulty level to the user  ; get problem on basis of dificulty
+
+get problem by id >>>>  after user click on any problem box , system should retrive that problem info from db by id 
+create testcase : /:id/createTestcase
+
+????? SUBMISSION ARCHITECTURE ?????
+submison model ->submit submission controller
+get submission by submission id controller : user1 has submission1 and user2 has submission2 , should not see each other submission : submission.user_id 
+                                             here submissions/submission_id , actual user can access not other , check user always
+get all submission of a user : getMySubmissions -> populate give prob id  title , difficulty , without this sub id only be shown , populate sub<->problem join data ,sub id is foriegn id
+                                                   sub model has prob id , not prob aother info like title difficulty , prob id is refernce ,
+                                                   problem id in prob model has ref="problem" , so if someon populate problem id , loook at problem model 
+                                                   populate is basically join 
+                                                   fetch related docs 
+                                                   .populate("problemId", "title difficulty") ==== Replace problemId with the Problem document, but only include title and difficulty.
+                               we will use paging method 
+                               get /submissions 
+                               get /submissions?page=1&limit=5
+users->authentication->authorization->problems->test cases->submissions->ownership checks
+
+???? Judge service v1 
+NOW,submit code -> submission created -> Pending status 
+Will make, prending ->running -> accepted
+
+lets make judge in service folder = get submission (pending) -> update running -> wait 3 secs simulation -> connect to submison controller 
+await new Promise(
+      resolve =>
+      setTimeout(resolve,3000)
+   );   is 3 sec simulation sleep 
+so , in sub controller , status=pending then call judge then save the submission 
+whevever a submission is submitted , the postman show pending status , but then in get submssion by id , its changed to accpeted 
+
+???? JUDGE V 2
+fake evaluation for now ,
+submisison->get problem -> get testcases ->eval ->update verdict
+fake rule if submission has return then Accpeted otherwise wrong answer
+
+??? redis 
+install docker desktop
+redis in vs terminal 
+install bullmq : bullmq is queue library
+src->queues->submission.queue.js 
+submisssion queue inside redis
+queue->job->worker picks it ->excecute it 
+
+redis is like a waiting area , worker =doctor , submission= patient 
+redis is temp storage 
+bull mq add job creation , tracking ,retries, failures,worker,delays
+redis= warehouse , bullmq =warehouse manager
+why queue?? 1000 submssions same time in server 
+worker: separate process whose job is background work, judger code , end mail ,gernarate reports
+api server onlu recieve req, send res
+api->redis->worker 1->worker 2
+
+post submission-> craete sub-> sub queue add -> job stored in redis -> response returnned
+woker->recieve job->judgesubmission()->updates mongodb
+
+how do i process lots of submission >>> handled by redis 
+
+submission.queue.js=create only queue , queue required from bullmq , provide connection(host,port)
+submissionQueue add judge (submission id) , job name , submission id 
+
+worker continously check if there is any job
+submission.worker.js create worker that check submission queue, job sub id , connection info(host,port)
+listen to submission queue
+
+redis store job , bull mq manage jobs , judgesubmission is the one judging
+
+DOCKER : instead of fake verdict (return) , 
+docker container -> excecute code->compare output-> verdict

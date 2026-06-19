@@ -1,0 +1,10 @@
+{
+  "editor.inlineSuggest.enabled": true,
+  "editor.suggest.preview": true,
+  "editor.quickSuggestions": { "other": true, "comments": true, "strings": false },
+  "editor.suggestOnTriggerCharacters": true,
+  "github.copilot.inlineSuggest.enable": true,
+  "workbench.colorCustomizations": {
+    "editorGhostText.foreground": "#6b7280"
+  }
+}
