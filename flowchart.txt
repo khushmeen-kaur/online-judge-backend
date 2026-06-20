@@ -124,3 +124,60 @@ redis store job , bull mq manage jobs , judgesubmission is the one judging
 
 DOCKER : instead of fake verdict (return) , 
 docker container -> excecute code->compare output-> verdict
+DOCKER SANDOW v1: 
+..........
+ Image : template like node image,redis image,python image , blueprint
+containor :running insatnce , class ka object , redis image create redis container
+well , submission has code , we dont want taht to run on server , so we have temprary container ->run code ->destroy containor
+
+create file->create container->compile ->run->capture output -> destroy conatiner 
+
+ubuntu image run =>> now u r in linux machine in container in window
+now, our docker should be able to see the file :- bind mount or volume mount 
+
+/app/docker.txt => create file from docker to window vs code
+submission.code ->main.cpp->docker->verdict
+app mei g++ main.cpp -o main -> ./main (for excution) 
+
+main.cpp cant be on mongodb , g++ cant compile mongodb docs
+ worker get submission(from redis) -> create folder temp/sub-id -> create main.cpp ->docker compile it -> run excution -> capture output->verdict
+                                                      (fs.promise.writeFile(...))
+
+basically , src -> executors -> cpp.executor.js file mei function writeCppSource : 
+                                                                               (code,submissionId)
+                                                                               create dir "temp" -> temp/subid [mkdir created them]
+            basically make cpp files here in                                   write code into main.cpp [writeFile(patḥ(from mkdir) ,code)]
+            vs root only                                                       fs.mkdir = craeted temp dir 
+                                                                              path.join(dirname , "new file name") == path.join(subdir)
+                                                                  /temp/subid                    subdir=path.join(project_path,"name you wanna give to new dir",submisison-id)
+                                                                  /temp/subid/main.cpp           filepath=path.join(subdir,"main.cpp")
+                                                                  code in filepath               writeFile(filepath,code)               
+                                                                               now its temp/subid/main.cpp
+            test.js has called "writeCppSource"(code we wrote,submission id we gave )                                                          
+             npm run test.js runned all this temp/subid/main.cpp 
+             
+   submisiion->node.js->main.cpp 
+
+in cpp.executor.js => function "compileCpp" =>1> get dir path of temp/subid
+                                              2> COMMAND =`...` it has : docker run --rm (docker container)->-v "${dir}:/app (mount folder) -> gcc (image has g++,gcc,linux) -> compile (g++) 
+                                                                                                                    host folder :/container folder 
+                                               --rm = containor finish , then delete it : keep redis container ,mongodb container , but remove compile container ,run container, temp execution container
+
+`docker run --rm  = make disposable container
+-v "${submissionDir}:/app" = host dir , container foler is app
+gcc = image name has g++,linux 
+bash -c =open linux terminal
+"cd /app && g++ main.cpp -o main"`; = move to app then compile main.cpp in "main" executable 
+
+well app is mounted in window , thats why main is still there after contaior destroyed 
+app is project1/temp/subid 
+
+create linux machine -> give access of folder ->compile main.cpp->excutable in folder ->delete linux machine
+image = gcc, bash -c    host dir conatinor app   g++              cd/app ... -o main     --rm
+
+so , main in app in docker and main in project1/temp/subid is same file , diff views
+
+                                              3>await execPromise(command)
+ for now , "writeCppSource" make temp/subid/main.cpp -> compileCpp temp/sub/id/main
+           [write code in cpp ]                     [main is executable file]
+                                                          g++
