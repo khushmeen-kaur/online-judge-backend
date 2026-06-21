@@ -1,0 +1,34 @@
+User
+|
+v
+Express API
+|
+v
+MongoDB
+
+Submission
+|
+v
+Redis Queue
+|
+v
+BullMQ Worker
+|
+v
+Judge Service
+|
++--------------------+
+|                    |
+v                    v
+Docker Compile     Docker Execute
+|                    |
++---------+----------+
+|
+v
+Output Comparison
+|
+v
+Verdict
+|
+v
+MongoDB
