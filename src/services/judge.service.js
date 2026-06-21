@@ -36,7 +36,29 @@ async (submissionId) => {
 let allPassed=true;
 for (const testcase of testCases){
    await writeInputFile(submission._id.toString(),testcase.input);
-   const actualOutput=await runCpp(submission._id.toString());
+   let actualOutput;
+   try{
+    actualOutput=await runCpp(submission._id.toString());
+   }
+   catch(error){
+
+   if(error.killed){
+
+      submission.status =
+      "TIME_LIMIT_EXCEEDED";
+
+   }
+   else{
+
+      submission.status =
+      "RUNTIME_ERROR";
+
+   }
+
+   await submission.save();
+
+   return;
+}
    const passed=compareOutput(actualOutput,testcase.expectedOutput);
    if (!passed){
       allPassed=false;

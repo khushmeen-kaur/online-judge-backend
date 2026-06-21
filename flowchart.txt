@@ -189,3 +189,6 @@ fetch inp -> create input.txt-> docker run -> ./main <input.txt -> capture outpu
 now , remove old fake rule , now implement this in judge.service.js file ; create loop for testcases , let allpassed 
 
 complilation error -> testcase loop ->allpassed verdict 
+
+RTE///RUNTIME error => runcpp try catch ; in judge.service.js let actualOutput then try catch 
+TLE///time_limit_exceeded =?

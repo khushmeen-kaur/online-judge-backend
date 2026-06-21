@@ -51,8 +51,14 @@ async function runCpp(submissionId){
     // find executable -> runs executable in docker -> capture stdout -> retun output
     const submissionDir=path.join(process.cwd(),"temp",submissionId);
     const command=`docker run --rm -v "${submissionDir}:/app" gcc bash -c "cd /app && ./main < input.txt"`;
-    const {stdout}=await execPromise(command);
+    try{
+    const {stdout}=await execPromise(command,{timeout:2000});
     return stdout;
+    }
+    catch(error){
+        console.log("runtime error");
+        throw error;
+    }
 
 }
 
