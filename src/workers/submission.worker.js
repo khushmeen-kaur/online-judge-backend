@@ -1,7 +1,6 @@
 const path = require("path");
 const { Worker } = require("bullmq");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
-
 const connectToDB = require("../config/db.js");
 
 connectToDB();

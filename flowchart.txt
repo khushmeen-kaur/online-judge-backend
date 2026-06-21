@@ -181,3 +181,11 @@ so , main in app in docker and main in project1/temp/subid is same file , diff v
  for now , "writeCppSource" make temp/subid/main.cpp -> compileCpp temp/sub/id/main
            [write code in cpp ]                     [main is executable file]
                                                           g++
+runCpp : use ./main to run
+trim() for removing leading spaces,trailing spaces,trailing newlines
+
+fetch inp -> create input.txt-> docker run -> ./main <input.txt -> capture output -> comapre verdict
+
+now , remove old fake rule , now implement this in judge.service.js file ; create loop for testcases , let allpassed 
+
+complilation error -> testcase loop ->allpassed verdict 

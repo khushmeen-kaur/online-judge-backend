@@ -30,11 +30,36 @@ async function compileCpp(submissionId){
     const submissionDir=path.join(process.cwd(),"temp",submissionId);
     const command =
 `docker run --rm -v "${submissionDir}:/app" gcc bash -c "cd /app && g++ main.cpp -o main"`;
+try{    
     await execPromise(command);
-    console.log("compiltion success");
+    console.log("compilation success");
+}
+catch(error){
+    console.log("compilation failed");
+    throw error;
+}
 }
 
+async function writeInputFile(submissionId,input){
+    const submissionDir=path.join(process.cwd(),"temp",submissionId);
+    const inputPath=path.join(submissionDir,"input.txt");
+    await fs.writeFile(inputPath,input);
+    return inputPath;
+}
+
+async function runCpp(submissionId){
+    // find executable -> runs executable in docker -> capture stdout -> retun output
+    const submissionDir=path.join(process.cwd(),"temp",submissionId);
+    const command=`docker run --rm -v "${submissionDir}:/app" gcc bash -c "cd /app && ./main < input.txt"`;
+    const {stdout}=await execPromise(command);
+    return stdout;
+
+}
+
+function compareOutput(actual,expected){
+    return (actual.trim()===expected.trim());
+}
 
 module.exports = {
-    writeCppSource,compileCpp
+    writeCppSource,compileCpp,runCpp,writeInputFile,compareOutput
 };

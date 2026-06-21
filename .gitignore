@@ -1,9 +1,5 @@
 node_modules/
 .env
-coverage/
-dist/
+.vscode/
 temp/
 docker-test/
-
-*.exe
-main

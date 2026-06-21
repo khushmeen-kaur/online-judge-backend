@@ -1,5 +1,7 @@
 const Submission = require("../models/submission.model");
 const TestCase = require("../models/testcase.model");
+const {writeCppSource,compileCpp,writeInputFile,runCpp,compareOutput}=require("../executors/cpp.executor");
+
 
 const judgeSubmission =
 async (submissionId) => {
@@ -10,6 +12,7 @@ async (submissionId) => {
    if(!submission){return;}
 
    submission.status ="RUNNING";
+   await submission.save();
    
    // fetch testcase
    const testCases =await TestCase.find({problemId:submission.problemId});
@@ -19,22 +22,34 @@ async (submissionId) => {
    console.log("Judge started");
 
    console.log("Status changed to RUNNING");
+   try{
+      await writeCppSource(submission.code,submission._id.toString());
+      await compileCpp(submission._id.toString());
+   }
+   catch(error){
+      submission.status="COMPILATION_ERROR";
+      await submission.save();
+      console.log(error.stderr || error.message || error);
+      return;
+   }
 
-// for checking accept or wrong ans
-if(
-   submission.code.includes(
-      "return"
-   )
-){
-   submission.status =
-   "ACCEPTED";
+let allPassed=true;
+for (const testcase of testCases){
+   await writeInputFile(submission._id.toString(),testcase.input);
+   const actualOutput=await runCpp(submission._id.toString());
+   const passed=compareOutput(actualOutput,testcase.expectedOutput);
+   if (!passed){
+      allPassed=false;
+      break;
+   }
 }
-else{
-   submission.status =
-   "WRONG_ANSWER";
+if (allPassed){
+   submission.status="ACCEPTED";
+}else{
+   submission.status="WRONG_ANSWER";
 }
-
 await new Promise(resolve =>setTimeout(resolve,3000));
+
 await submission.save();
 console.log(
    "Final Status:",
