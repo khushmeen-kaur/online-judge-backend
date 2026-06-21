@@ -191,4 +191,12 @@ now , remove old fake rule , now implement this in judge.service.js file ; creat
 complilation error -> testcase loop ->allpassed verdict 
 
 RTE///RUNTIME error => runcpp try catch ; in judge.service.js let actualOutput then try catch 
-TLE///time_limit_exceeded =?
+TLE///time_limit_exceeded => 
+
+todo : Execution Time Measurement
+Memory Usage Measurement
+README
+Architecture Diagram
+Contest APIs
+Leaderboard
+Multi Language Support
