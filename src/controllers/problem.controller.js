@@ -1,9 +1,9 @@
-const ProblemModel = require("../models/problem.model");
+const problemModel = require("../models/problem.model");
 const testcaseModel = require("../models/testcase.model");
 
 async function createProblem(req, res) {
     const { title, description, difficulty, constraints } = req.body;
-    const createdProblem = await ProblemModel.create({
+    const createdProblem = await problemModel.create({
         title,
         description,
         difficulty,
@@ -17,7 +17,7 @@ async function createProblem(req, res) {
 async function getAllProblems(req,res){
     try {
 
-        const problems = await ProblemModel.find()
+        const problems = await problemModel.find()
             .select("title difficulty");
 
         res.status(200).json(problems);
@@ -32,7 +32,7 @@ async function getAllProblems(req,res){
 };
 
 async function getProblemById(req, res) {
-    const problem = await ProblemModel.findById(req.params.id);
+    const problem = await problemModel.findById(req.params.id);
     if (!problem) {
         return res.status(404).json({
             message:"given problem not found"

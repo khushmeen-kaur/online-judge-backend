@@ -52,7 +52,16 @@ const submissionSchema = new mongoose.Schema(
     memoryUsed: {
       type: Number,
       default: 0,
-    }
+    },
+    contestId:{
+   type:
+   mongoose.Schema.Types.ObjectId,
+
+   ref:"Contest",
+
+   default:null
+}
+
   },
   {
     timestamps: true,
