@@ -3,6 +3,7 @@ const path = require("path");
 //for compile function 
 const { exec } =require("child_process");
 const util = require("util");
+const { doesNotMatch } = require("assert");
 const execPromise =util.promisify(exec);
 
 
@@ -52,8 +53,11 @@ async function runCpp(submissionId){
     const submissionDir=path.join(process.cwd(),"temp",submissionId);
     const command=`docker run --rm -v "${submissionDir}:/app" gcc bash -c "cd /app && ./main < input.txt"`;
     try{
+    const StartTime=Date.now();
     const {stdout}=await execPromise(command,{timeout:2000});
-    return stdout;
+    const endTime=Date.now();
+    const executionTime=endTime-StartTime;
+    return {stdout,executionTime};
     }
     catch(error){
         console.log("runtime error");

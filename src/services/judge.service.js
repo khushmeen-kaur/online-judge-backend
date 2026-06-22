@@ -34,11 +34,16 @@ async (submissionId) => {
    }
 
 let allPassed=true;
+let maxExecutionTime=0;
 for (const testcase of testCases){
    await writeInputFile(submission._id.toString(),testcase.input);
    let actualOutput;
+   let executionTime;
    try{
-    actualOutput=await runCpp(submission._id.toString());
+    const result=await runCpp(submission._id.toString());
+    actualOutput=result.stdout;
+    executionTime=result.executionTime;
+    maxExecutionTime=Math.max(maxExecutionTime,executionTime);
    }
    catch(error){
 
@@ -65,6 +70,7 @@ for (const testcase of testCases){
       break;
    }
 }
+submission.executionTime=maxExecutionTime;
 if (allPassed){
    submission.status="ACCEPTED";
 }else{
