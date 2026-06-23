@@ -1,0 +1,35 @@
+{
+  "info": {
+    "_postman_id": "00e3544e-88b8-4597-8ce7-8f0020e09439",
+    "name": "authentication",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55144381",
+    "_collection_link": "https://go.postman.co/collection/55144381-00e3544e-88b8-4597-8ce7-8f0020e09439?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "register",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "login",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "logout",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}

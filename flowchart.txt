@@ -200,3 +200,12 @@ Architecture Diagram
 Contest APIs
 Leaderboard
 Multi Language Support
+
+Implemented contest => create contest (add problems in json), register for contest ->submit your submissiion
+implemented leaderboard=> submission with probid and contestid-> get leaderboard (use set())
+implemented validation of contests in submissiion -> whether contest e%xist , you registered ?, contest live?
+implemeted contests stats: get contest_id -> get participants from contestRegistration model 
+                           ->total submissions submissionModel.countDocumets({contestId}) 
+                           -> accepted submissions (status = accepted)
+implemented mycontests=> get registration from contestRegistrationModel ({userid}) ->get contests only
+>>>>> how to update "CONTEST" : 6

@@ -2,21 +2,40 @@
 
 ## Overview
 
-A scalable Online Judge backend built using Node.js, Express.js, MongoDB, Redis, BullMQ, and Docker.
+Online Judge Backend is a scalable coding platform backend built using Node.js, Express.js, MongoDB, Redis, BullMQ, and Docker.
 
-The system allows users to submit code solutions, which are asynchronously processed through a queue-based architecture. Submitted programs are compiled and executed inside isolated Docker containers and evaluated against predefined test cases.
+The platform allows users to submit code solutions for programming problems. Submissions are processed asynchronously using Redis queues and BullMQ workers. Code is compiled and executed inside isolated Docker containers and evaluated against predefined test cases.
+
+The platform also supports contests, participant registration, leaderboards, and automated verdict generation.
 
 ---
 
 ## Features
 
+### Authentication
+
+* User Registration
+* User Login
 * JWT Authentication
-* Problem Management
-* Test Case Management
-* Submission Management
-* Redis + BullMQ Queue Processing
+
+### Problem Management
+
+* Create Problems
+* View Problems
+* Manage Test Cases
+
+### Submission System
+
+* Submit Solutions
+* View Submission History
+* Automated Evaluation
+
+### Judge Engine
+
+* Dockerized Code Compilation
 * Dockerized Code Execution
-* Automated Verdict Generation
+* Test Case Validation
+* Output Comparison
 
 Supported Verdicts:
 
@@ -26,38 +45,165 @@ Supported Verdicts:
 * RUNTIME_ERROR
 * TIME_LIMIT_EXCEEDED
 
+### Contest System
+
+* Create Contest
+* Update Contest
+* Delete Contest
+* Join Contest
+* View Participants
+* Contest Statistics
+* Contest Leaderboard
+
+### Security
+
+* Contest Ownership Authorization
+* Contest Submission Validation
+
 ---
 
 ## Tech Stack
 
+### Backend
+
 * Node.js
 * Express.js
+
+### Database
+
 * MongoDB
 * Mongoose
+
+### Queue Processing
+
 * Redis
 * BullMQ
+
+### Code Execution
+
 * Docker
+* GCC
+
+### Authentication
+
+* JWT
 
 ---
 
-## Workflow
+## System Architecture
 
-1. User submits code.
-2. Submission enters Redis queue.
-3. Worker picks submission.
-4. Source file is generated.
-5. Code is compiled inside Docker.
-6. Test cases are executed.
-7. Output is compared with expected output.
-8. Verdict is generated and stored.
+User
+↓
+Express API
+↓
+MongoDB
+
+Submission
+↓
+Redis Queue
+↓
+BullMQ Worker
+↓
+Judge Service
+↓
+Docker Compile
+↓
+Docker Execute
+↓
+Verdict Generation
+↓
+MongoDB
 
 ---
 
-## Future Enhancements
+## API Modules
 
-* Contest System
-* Leaderboards
+### Authentication
+
+* Register User
+* Login User
+
+### Problems
+
+* Create Problem
+* Get Problems
+* Manage Test Cases
+
+### Submissions
+
+* Create Submission
+* Get Submission By ID
+* Get My Submissions
+
+### Contests
+
+* Create Contest
+* Update Contest
+* Delete Contest
+* Join Contest
+* Get Participants
+* Get My Contests
+* Get Contest Stats
+* Get Leaderboard
+
+---
+
+## Getting Started
+
+### Clone Repository
+
+```bash
+git clone <repository-url>
+cd online-judge-backend
+```
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Configure Environment Variables
+
+Create a `.env` file:
+
+```env
+PORT=3001
+MONGO_URI=your_mongodb_uri
+JWT_SECRET=your_jwt_secret
+```
+
+### Start Redis
+
+```bash
+docker run -d -p 6379:6379 redis
+```
+
+### Start Server
+
+```bash
+npm start
+```
+
+### Start Worker
+
+```bash
+node src/workers/submission.worker.js
+```
+
+---
+
+## Future Improvements
+
 * Multi-language Support
-* Memory Limit Exceeded
-* Execution Time Tracking
-* Detailed Submission Analytics
+* Real-time Updates
+* Notifications
+* Advanced Contest Features
+* Memory Usage Tracking
+
+---
+
+## Author
+
+Khushmeen Kaur
+Integrated M.Tech Software Engineering, VIT Vellore

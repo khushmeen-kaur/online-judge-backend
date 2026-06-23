@@ -2,13 +2,17 @@ const submissionModel = require("../models/submission.model");
 const problemModel = require("../models/problem.model");
 const {judgeSubmission} = require("../services/judge.service");
 const submissionQueue = require("../queues/submission.queue");
+const contestModel=require("../models/contest.model");
+const contestRegistrationModel = require("../models/contestRegistration.model");
+
 const submitSolutionController= async (req,res) => {
   try {
 
     const {
       problemId,
       language,
-      code
+      code,
+      contestId
     } = req.body;
 
     const problem =
@@ -19,19 +23,49 @@ const submitSolutionController= async (req,res) => {
         message: "Problem not found"
       });
     }
+    const contest=await contestModel.findById(contestId);
+    if (!contest){
+      return res.status(404).json({
+        message:"contest not found"
+      })
+    }
+    const problemExists =contest.problems.some(problem =>problem.toString() ===problemId);
+    if(!problemExists){
 
+   return res.status(400)
+   .json({
+
+      message:
+      "Problem does not belong to contest"
+
+   });
+
+}
+    const registration=await contestRegistrationModel.findOne({contestId,userId:req.user.userId});
+    if (!registration){
+      return res.status(403).json({
+        message:"join contest first"
+      });
+    }
+    const now=new date();
+    if (now<contest.startTime){
+      return res.status(400).json({
+        message:"contest has not started yet"
+      })
+    }
+    if (now>contest.endTime){
+      return res.status(400).json({
+        message:"contest has ended"
+      })
+    }
     const submission =
       await submissionModel.create({
-
         userId: req.user._id,
-
         problemId,
-
         language,
-
         code,
-
-        status: "PENDING"
+        status: "PENDING",
+        contestId:contestId || null
       });
 
       // added after judge service import 
@@ -41,6 +75,7 @@ const submitSolutionController= async (req,res) => {
         {submissionId:submission._id},
         {attempts: 3,}
       );
+
 
     return res.status(201).json({
       message:
@@ -91,5 +126,6 @@ async function getMySubmission(req,res){
   return res.status(200).json(submissions);
 
 }
+
 
 module.exports = {submitSolutionController,getSubmissionById,getMySubmission};

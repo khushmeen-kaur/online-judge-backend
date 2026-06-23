@@ -16,6 +16,6 @@ problemRouter.get(
 
 problemRouter.get("/:id", authMiddleware, problemController.getProblemById);
 
-problemRouter.post("/:id/createTestcase", authMiddleware, isAdminMiddleware, problemController.createTestcase);
+problemRouter.post("/:id/createTestcase", authMiddleware, problemController.createTestcase);
 
 module.exports = problemRouter;
